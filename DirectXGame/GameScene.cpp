@@ -165,6 +165,7 @@ void GameScene::Draw() {
 	Model::PostDraw();
 
 	if (player_->HasWire()) {
+		// 接続中だけプレイヤーとアンカーの間にワイヤーを描画する。
 		PrimitiveDrawer* primitiveDrawer = PrimitiveDrawer::GetInstance();
 		primitiveDrawer->Reset();
 		primitiveDrawer->SetCamera(&camera_);

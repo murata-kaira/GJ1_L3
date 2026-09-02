@@ -84,6 +84,7 @@ AABB Player::GetAABB() {
 void Player::InputMove() {
 
 	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+		// SPACEでワイヤーの接続と解除を切り替える。
 		if (hasWire_) {
 			hasWire_ = false;
 		} else {
@@ -92,6 +93,7 @@ void Player::InputMove() {
 	}
 
 	if (hasWire_) {
+		// 接続中も左右入力と重力で振り子に勢いを与える。
 		Vector3 acceleration = {};
 		if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
 			acceleration.x += kAcceleration;
@@ -150,6 +152,7 @@ void Player::InputMove() {
 }
 
 bool Player::TryAttachWire() {
+	// 向いている斜め上のブロックを、射程内で近い順に探す。
 	const float directionX = lrDirection_ == LRDirection::kRight ? 1.0f : -1.0f;
 	const Vector3 direction = {directionX, 1.0f, 0.0f};
 	constexpr float kWireStep = 0.1f;
@@ -179,6 +182,7 @@ void Player::UpdateWire() {
 
 	Vector3 toPlayer = worldTransform_.translation_ - wireAnchor_;
 	float distanceSquared = toPlayer.x * toPlayer.x + toPlayer.y * toPlayer.y;
+	// ワイヤーがたるんでいる間は通常の移動を維持する。
 	if (distanceSquared <= wireLength_ * wireLength_) {
 		return;
 	}
@@ -187,6 +191,7 @@ void Player::UpdateWire() {
 	Vector3 direction = toPlayer * (1.0f / distance);
 	worldTransform_.translation_ = wireAnchor_ + direction * wireLength_;
 
+	// 外向きの速度を取り除き、ワイヤー長を超えないようにする。
 	float outwardSpeed = velocity_.x * direction.x + velocity_.y * direction.y;
 	if (outwardSpeed > 0.0f) {
 		velocity_ -= direction * outwardSpeed;
