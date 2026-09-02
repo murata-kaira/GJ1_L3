@@ -164,6 +164,13 @@ void GameScene::Draw() {
 	}
 	Model::PostDraw();
 
+	if (player_->HasWire()) {
+		PrimitiveDrawer* primitiveDrawer = PrimitiveDrawer::GetInstance();
+		primitiveDrawer->Reset();
+		primitiveDrawer->SetCamera(&camera_);
+		primitiveDrawer->DrawLine3d(player_->GetWorldPosition(), player_->GetWireAnchor(), {1.0f, 1.0f, 1.0f, 1.0f});
+	}
+
 	fade_->Draw();
 }
 

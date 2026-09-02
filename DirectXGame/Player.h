@@ -25,6 +25,8 @@ public:
 
 	const KamataEngine::WorldTransform& GetWorldTransform() const { return worldTransform_; }
 	const KamataEngine::Vector3& GetVelocity() const { return velocity_; }
+	bool HasWire() const { return hasWire_; }
+	const KamataEngine::Vector3& GetWireAnchor() const { return wireAnchor_; }
 
 	bool IsDead() const { return isDead_; }
 
@@ -62,6 +64,9 @@ private:
 	static inline const float kHeight = 0.8f;
 
 	bool onGround_ = true;
+	bool hasWire_ = false;
+	KamataEngine::Vector3 wireAnchor_ = {};
+	float wireLength_ = 0.0f;
 
 	enum class LRDirection {
 		kRight,
@@ -83,6 +88,8 @@ private:
 	bool isDead_ = false;
 
 	void InputMove();
+	void UpdateWire();
+	bool TryAttachWire();
 
 	void CheckMapCollision(CollisionMapInfo& info);
 

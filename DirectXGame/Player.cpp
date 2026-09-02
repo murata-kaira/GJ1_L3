@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "MapChipField.h"
 #include <algorithm>
+#include <cmath>
 #include <numbers>
 
 using namespace KamataEngine;
@@ -35,10 +36,9 @@ void Player::Update() {
 	CheckMapMove(collisionMapInfo);
 
 	CheckMapWall(collisionMapInfo);
-
 	CheckMapLanding(collisionMapInfo);
 
-	CheckMapLanding(collisionMapInfo);
+	UpdateWire();
 
 	AnimateTurn();
 
@@ -83,6 +83,29 @@ AABB Player::GetAABB() {
 
 void Player::InputMove() {
 
+	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+		if (hasWire_) {
+			hasWire_ = false;
+		} else {
+			TryAttachWire();
+		}
+	}
+
+	if (hasWire_) {
+		Vector3 acceleration = {};
+		if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
+			acceleration.x += kAcceleration;
+		} else if (Input::GetInstance()->PushKey(DIK_LEFT)) {
+			acceleration.x -= kAcceleration;
+		}
+		velocity_ += acceleration;
+		velocity_.x = std::clamp(velocity_.x, -kLimitRunSpeed, kLimitRunSpeed);
+		velocity_ += Vector3(0, -kGravityAcceleration, 0);
+		velocity_.y = std::max(velocity_.y, -kLimitFallSpeed);
+		onGround_ = false;
+		return;
+	}
+
 	if (onGround_) {
 		if (Input::GetInstance()->PushKey(DIK_RIGHT) || Input::GetInstance()->PushKey(DIK_LEFT)) {
 
@@ -123,6 +146,50 @@ void Player::InputMove() {
 	} else {
 		velocity_ += Vector3(0, -kGravityAcceleration, 0);
 		velocity_.y = std::max(velocity_.y, -kLimitFallSpeed);
+	}
+}
+
+bool Player::TryAttachWire() {
+	const float directionX = lrDirection_ == LRDirection::kRight ? 1.0f : -1.0f;
+	const Vector3 direction = {directionX, 1.0f, 0.0f};
+	constexpr float kWireStep = 0.1f;
+	constexpr float kWireRange = 8.0f;
+
+	for (float distance = kWireStep; distance <= kWireRange; distance += kWireStep) {
+		Vector3 position = worldTransform_.translation_ + direction * distance;
+		MapChipField::IndexSet index = mapChipField_->GetMapChipIndexSetByPosition(position);
+		if (mapChipField_->GetMapChipTypeByIndex(index.xIndex, index.yIndex) != MapChipType::kBlock) {
+			continue;
+		}
+
+		wireAnchor_ = position;
+		wireLength_ = std::sqrt(distance * distance * 2.0f);
+		hasWire_ = true;
+		onGround_ = false;
+		return true;
+	}
+
+	return false;
+}
+
+void Player::UpdateWire() {
+	if (!hasWire_) {
+		return;
+	}
+
+	Vector3 toPlayer = worldTransform_.translation_ - wireAnchor_;
+	float distanceSquared = toPlayer.x * toPlayer.x + toPlayer.y * toPlayer.y;
+	if (distanceSquared <= wireLength_ * wireLength_) {
+		return;
+	}
+
+	float distance = std::sqrt(distanceSquared);
+	Vector3 direction = toPlayer * (1.0f / distance);
+	worldTransform_.translation_ = wireAnchor_ + direction * wireLength_;
+
+	float outwardSpeed = velocity_.x * direction.x + velocity_.y * direction.y;
+	if (outwardSpeed > 0.0f) {
+		velocity_ -= direction * outwardSpeed;
 	}
 }
 
