@@ -165,7 +165,7 @@ void GameScene::Draw() {
 	Model::PostDraw();
 
 	if (player_->HasWire()) {
-		// 接続中だけプレイヤーとアンカーの間にワイヤーを描画する。
+		// 接続中だけ、プレイヤーから壁に刺さったアンカーまで白いワイヤーを描画する。
 		PrimitiveDrawer* primitiveDrawer = PrimitiveDrawer::GetInstance();
 		primitiveDrawer->Reset();
 		primitiveDrawer->SetCamera(&camera_);
