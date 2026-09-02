@@ -28,6 +28,10 @@ public:
 
 	bool IsDead() const { return isDead_; }
 
+	// ワイヤ状態の取得
+	bool HasWire() const { return hasWire_; }
+	const KamataEngine::Vector3& GetWireAnchor() const { return wireAnchor_; }
+
 
 private:
 	KamataEngine::WorldTransform worldTransform_;
@@ -43,17 +47,17 @@ private:
 	
 	
 
-	static inline const float kAcceleration = 1.0;
+	static inline const float kAcceleration = 0.5;
 
 	static inline const float kAttenuation = 0.5;
 
-	static inline const float kLimitRunSpeed = 0.5;
+	static inline const float kLimitRunSpeed = 0.25;
 
 	static inline const float kTimeTurn = 0.3f;
 
-	static inline const float kGravityAcceleration = 0.1f;
+	static inline const float kGravityAcceleration = 0.05f;
 
-	static inline const float kLimitFallSpeed = 1.0;
+	static inline const float kLimitFallSpeed = 0.5;
 
 	static inline const float kJumpAcceleration = 1.0f;
 
@@ -62,6 +66,12 @@ private:
 	static inline const float kHeight = 0.8f;
 
 	bool onGround_ = true;
+
+	// ワイヤーの接続状態
+	bool hasWire_ = false;
+	KamataEngine::Vector3 wireAnchor_ = {};
+	float wireLength_ = 0.0f;
+
 
 	enum class LRDirection {
 		kRight,
@@ -83,6 +93,12 @@ private:
 	bool isDead_ = false;
 
 	void InputMove();
+
+	
+	// ワイヤーの更新
+	void UpdateWire();
+	bool TryAttachWire();
+
 
 	void CheckMapCollision(CollisionMapInfo& info);
 
