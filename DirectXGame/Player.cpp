@@ -101,7 +101,7 @@ void Player::InputMove() {
 			acceleration.x -= kAcceleration;
 		}
 		velocity_ += acceleration;
-		velocity_.x = std::clamp(velocity_.x, -kLimitRunSpeed, kLimitRunSpeed);
+		velocity_.x = std::clamp(velocity_.x, -kLimitWireSpeed, kLimitWireSpeed);
 		velocity_ += Vector3(0, -kGravityAcceleration, 0);
 		velocity_.y = std::max(velocity_.y, -kLimitFallSpeed);
 		onGround_ = false;
@@ -169,6 +169,8 @@ bool Player::TryAttachWire() {
 		wireLength_ = std::sqrt(distance * distance * 2.0f);
 		hasWire_ = true;
 		onGround_ = false;
+		// ワイヤーが刺さった瞬間に、アンカーの下へ振り抜ける方向へ加速する。
+		velocity_ = {directionX * kWireAttachSpeed, -kWireAttachSpeed, 0.0f};
 		return true;
 	}
 

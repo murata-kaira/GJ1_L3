@@ -51,6 +51,10 @@ private:
 
 	static inline const float kLimitRunSpeed = 0.25f;
 
+	static inline const float kWireAttachSpeed = 0.5f;
+
+	static inline const float kLimitWireSpeed = 0.5f;
+
 	static inline const float kTimeTurn = 0.3f;
 
 	static inline const float kGravityAcceleration = 0.05f;
