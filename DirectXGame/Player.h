@@ -78,6 +78,7 @@ private:
 	// ワイヤーが壁に刺さった座標と、接続時に決まるワイヤーの長さ。
 	KamataEngine::Vector3 wireAnchor_ = {};
 	float wireLength_ = 0.0f;
+	// ワイヤーの長さから計算した加速倍率。短いほど大きくなる。
 	float wireAccelerationMultiplier_ = 1.0f;
 	// 接続時に保存する、ワイヤーを発射した左右方向（右: 1、左: -1）。
 	float wireAttachDirectionX_ = 0.0f;
