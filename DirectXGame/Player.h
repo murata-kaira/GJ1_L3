@@ -51,7 +51,7 @@ private:
 
 	static inline const float kLimitRunSpeed = 0.25f;
 
-	static inline const float kWireAttachSpeed = 0.5f;
+	static inline const float kWireAttachAcceleration = 0.02f;
 
 	static inline const float kLimitWireSpeed = 0.5f;
 
@@ -71,6 +71,7 @@ private:
 	bool hasWire_ = false;
 	KamataEngine::Vector3 wireAnchor_ = {};
 	float wireLength_ = 0.0f;
+	float wireAttachDirectionX_ = 0.0f;
 
 	enum class LRDirection {
 		kRight,

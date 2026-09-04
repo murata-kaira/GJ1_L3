@@ -95,6 +95,8 @@ void Player::InputMove() {
 	if (hasWire_) {
 		// ワイヤー接続中は、左右入力と重力でプレイヤーを振り子のように動かす。
 		Vector3 acceleration = {};
+		// ワイヤーが刺さった方向へ、少しずつ勢いを加える。
+		acceleration.x += wireAttachDirectionX_ * kWireAttachAcceleration;
 		if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
 			acceleration.x += kAcceleration;
 		} else if (Input::GetInstance()->PushKey(DIK_LEFT)) {
@@ -169,8 +171,8 @@ bool Player::TryAttachWire() {
 		wireLength_ = std::sqrt(distance * distance * 2.0f);
 		hasWire_ = true;
 		onGround_ = false;
-		// ワイヤーが刺さった瞬間に、アンカーの下へ振り抜ける方向へ加速する。
-		velocity_ = {directionX * kWireAttachSpeed, -kWireAttachSpeed, 0.0f};
+		// 接続後は、アンカーの下へ振り抜ける方向へ少しずつ加速する。
+		wireAttachDirectionX_ = directionX;
 		return true;
 	}
 
