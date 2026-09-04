@@ -51,8 +51,10 @@ private:
 
 	static inline const float kLimitRunSpeed = 0.25f;
 
+	// ワイヤー接続中に毎フレーム加える横方向の加速度。
 	static inline const float kWireAttachAcceleration = 0.02f;
 
+	// ワイヤーで振れている間だけ使用する最大横速度。
 	static inline const float kLimitWireSpeed = 0.5f;
 
 	static inline const float kTimeTurn = 0.3f;
@@ -69,8 +71,10 @@ private:
 
 	bool onGround_ = true;
 	bool hasWire_ = false;
+	// ワイヤーが壁に刺さった座標と、接続時に決まるワイヤーの長さ。
 	KamataEngine::Vector3 wireAnchor_ = {};
 	float wireLength_ = 0.0f;
+	// 接続時に保存する、ワイヤーを発射した左右方向（右: 1、左: -1）。
 	float wireAttachDirectionX_ = 0.0f;
 
 	enum class LRDirection {
