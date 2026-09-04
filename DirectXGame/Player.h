@@ -45,17 +45,19 @@ private:
 	
 	
 
-	static inline const float kAcceleration = 0.5f;
+	// 小さな加速度で徐々に最高速度へ近づける。
+	static inline const float kAcceleration = 0.025f;
 
-	static inline const float kAttenuation = 0.5;
+	// 入力を離したときも急停止せず、ゆっくり減速する。
+	static inline const float kAttenuation = 0.1f;
 
-	static inline const float kLimitRunSpeed = 0.25f;
+	static inline const float kLimitRunSpeed = 0.15f;
 
 	// ワイヤー接続中に毎フレーム加える横方向の加速度。
 	static inline const float kWireAttachAcceleration = 0.02f;
 
 	// ワイヤーで振れている間だけ使用する最大横速度。
-	static inline const float kLimitWireSpeed = 0.5f;
+	static inline const float kLimitWireSpeed = 0.3f;
 
 	static inline const float kTimeTurn = 0.3f;
 
