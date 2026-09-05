@@ -1,3 +1,4 @@
+#include "GameEnd.h"
 #include "GameScene.h"
 #include "KamataEngine.h"
 #include "TitleScene.h"
@@ -7,21 +8,22 @@ using namespace KamataEngine;
 
 GameScene* gameScene = nullptr;
 TitleScene* titleScene = nullptr;
-
+GameEnd* gameEnd = nullptr;
 
 enum class Scene {
 	kUnknown = 0,
 	kTitle,
 	kGame,
-
+	kEnd,
 };
 
 Scene scene = Scene::kUnknown;
 
 void ChangeScene() {
-	switch (scene) { case Scene::kTitle:
+	switch (scene) {
+	case Scene::kTitle:
 		if (titleScene->IsFinished()) {
-		
+
 			scene = Scene::kGame;
 
 			delete titleScene;
@@ -32,19 +34,36 @@ void ChangeScene() {
 		}
 		break;
 	case Scene::kGame:
-		if (gameScene->IsFnished()) {
-		
+		if (gameScene->IsPauseReturn()) {
 			scene = Scene::kTitle;
-
 			delete gameScene;
 			gameScene = nullptr;
-
+			titleScene = new TitleScene;
+			titleScene->Initialize();
+		} else if (gameScene->IsFnished()) {
+			scene = Scene::kGame;
+			delete gameScene;
+			gameScene = nullptr;
+			gameScene = new GameScene;
+			gameScene->Initialize();
+		} else if (gameScene->IsClear()) {
+			scene = Scene::kEnd;
+			delete gameScene;
+			gameScene = nullptr;
+			gameEnd = new GameEnd;
+			gameEnd->Initialize();
+		}
+		break;
+	case Scene::kEnd:
+		if (gameEnd->IsFinished()) {
+			scene = Scene::kTitle;
+			delete gameEnd;
+			gameEnd = nullptr;
 			titleScene = new TitleScene;
 			titleScene->Initialize();
 		}
 		break;
 	}
-
 }
 
 void UpdateScene() {
@@ -54,6 +73,9 @@ void UpdateScene() {
 		break;
 	case Scene::kGame:
 		gameScene->Update();
+		break;
+	case Scene::kEnd:
+		gameEnd->Update();
 		break;
 	}
 }
@@ -66,9 +88,10 @@ void DrawScene() {
 	case Scene::kGame:
 		gameScene->Draw();
 		break;
+	case Scene::kEnd:
+		gameEnd->Draw();
 	}
 }
-
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
@@ -78,9 +101,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 	scene = Scene::kTitle;
-	titleScene =  new TitleScene;
+	titleScene = new TitleScene;
 	titleScene->Initialize();
-
 
 	while (true) {
 
@@ -101,6 +123,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	delete gameScene;
 	delete titleScene;
+	delete gameEnd;
 
 	KamataEngine::Finalize();
 

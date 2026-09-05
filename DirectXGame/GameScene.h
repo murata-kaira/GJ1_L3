@@ -61,6 +61,13 @@ class GameScene {
 
 	Fade* fade_ = nullptr;
 
+	// 一時停止
+	bool isPause_ = false;
+	uint32_t pauseTextureHandle_ = 0;
+	KamataEngine::Sprite* pauseSprite_ = nullptr;
+	bool isPauseReturn_ = false;
+
+	bool isClear_ = false;
 
 public:
 	~GameScene();
@@ -78,4 +85,8 @@ public:
 	void ChangePhase();
 
 	bool IsFnished() const { return finished_; }
+
+	bool IsPauseReturn() const { return isPauseReturn_; }
+
+	bool IsClear() const { return isClear_; }
 };

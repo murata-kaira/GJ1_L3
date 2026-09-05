@@ -1,17 +1,17 @@
-#include "TitleScene.h"
 #include "MyMath.h"
+#include "GameEnd.h"
 #include <numbers>
 
 using namespace KamataEngine;
 
-TitleScene::~TitleScene() {
+GameEnd::~GameEnd() {
 	delete model_;
 	delete modelPlayer_;
 
 	delete fade_;
 }
 
-void TitleScene::Initialize() {
+void GameEnd::Initialize() {
 
 	model_ = Model::CreateFromOBJ("titleFont");
 	modelPlayer_ = Model::CreateFromOBJ("player");
@@ -33,22 +33,26 @@ void TitleScene::Initialize() {
 	fade_->Start(Fade::Status::FadeIn, 1.0f);
 }
 
-void TitleScene::Update() {
+void GameEnd::Update() {
 
 	switch (phase_) {
 	case Phase::kMain:
+
 		if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+
 			phase_ = Phase::kFadeOut;
 			fade_->Start(Fade::Status::FadeOut, 1.0f);
 		}
 		break;
 	case Phase::kFadeIn:
+
 		fade_->Update();
 		if (fade_->IsFinished()) {
 			phase_ = Phase::kMain;
 		}
 		break;
 	case Phase::kFadeOut:
+
 		fade_->Update();
 		if (fade_->IsFinished()) {
 			finished_ = true;
@@ -65,7 +69,7 @@ void TitleScene::Update() {
 	worldTransformPlayer_.TransferMatrix();
 }
 
-void TitleScene::Draw() {
+void GameEnd::Draw() {
 
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
