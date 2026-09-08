@@ -152,9 +152,16 @@ void GameScene::Update() {
 			}
 		}
 		// プレイヤーが一定のラインを越えたらクリア
+		if (player_->GetWorldPosition().x >= mapChipField_->GetMapChipPositionByIndex(kGoalBlockIndexX_, 0).x) {
+			isClear_ = true;
+		}
+
+#ifdef _DEBUG
+		// デバッグ用: バックスペースキーでもクリア扱いにできる
 		if (Input::GetInstance()->TriggerKey(DIK_BACKSPACE)) {
 			isClear_ = true;
 		}
+#endif
 
 		CheckAllCollisions();
 		ChangePhase();
