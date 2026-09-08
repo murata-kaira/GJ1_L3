@@ -92,6 +92,7 @@ private:
 	};
 
 	LRDirection lrDirection_ = LRDirection::kRight;
+	bool isFacingFront_ = true;
 
 	float turnFirstRotationY_ = 0.0f;
 	float turnTimer_ = 0.0f;

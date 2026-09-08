@@ -20,7 +20,8 @@ void Player::Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera
 
 	worldTransform_.translation_ = position;
 
-	worldTransform_.rotation_.y = std::numbers::pi_v<float> / 2.0f;
+	// 待機中はモデルの正面を向ける。
+	worldTransform_.rotation_.y = 0.0f;
 }
 
 void Player::Update() {
@@ -124,8 +125,9 @@ void Player::InputMove() {
 					velocity_.x *= (1.0f - kAttenuation);
 				}
 				acceleration.x += kAcceleration;
-				if (lrDirection_ != LRDirection::kRight) {
+				if (lrDirection_ != LRDirection::kRight || isFacingFront_) {
 					lrDirection_ = LRDirection::kRight;
+					isFacingFront_ = false;
 					turnFirstRotationY_ = worldTransform_.rotation_.y;
 					turnTimer_ = kTimeTurn;
 				}
@@ -136,8 +138,9 @@ void Player::InputMove() {
 				}
 
 				acceleration.x -= kAcceleration;
-				if (lrDirection_ != LRDirection::kLeft) {
+				if (lrDirection_ != LRDirection::kLeft || isFacingFront_) {
 					lrDirection_ = LRDirection::kLeft;
+					isFacingFront_ = false;
 					turnFirstRotationY_ = worldTransform_.rotation_.y;
 					turnTimer_ = kTimeTurn;
 				}
