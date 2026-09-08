@@ -35,7 +35,7 @@ void GameScene::Initialize() {
 
 	modelBlock_ = Model::CreateFromOBJ("block", true);
 
-	modelPlayer_ = Model::CreateFromOBJ("imo", true);
+	modelPlayer_ = Model::CreateFromOBJ("player", true);
 
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 
