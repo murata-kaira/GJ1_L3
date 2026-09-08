@@ -10,7 +10,7 @@ using namespace MathUtility;
 
 void Player::Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera, const Vector3& position) {
 
-	assert(model);
+	//assert(model);
 
 	camera_ = camera;
 

@@ -9,7 +9,7 @@ using namespace MathUtility;
 
 void Enemy::Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera, const KamataEngine::Vector3& position) {
 
-	assert(model);
+	//assert(model);
 
 	model_ = model;
 

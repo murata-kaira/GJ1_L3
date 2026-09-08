@@ -2,7 +2,7 @@
 
 
 void Skydome::Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera) {
-	assert(model);
+	//assert(model);
 
 	camera_ = camera;
 
