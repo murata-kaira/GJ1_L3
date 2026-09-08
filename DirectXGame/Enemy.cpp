@@ -17,6 +17,8 @@ void Enemy::Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera,
 
 	worldTransform_.Initialize();
 
+	// 当たり判定は変更せず、モデルの見た目だけを大きくする。
+	worldTransform_.scale_ = {1.5f, 1.5f, 1.5f};
 	worldTransform_.translation_ = position;
 
 	worldTransform_.rotation_.y = -std::numbers::pi_v<float> / 2.0f;
