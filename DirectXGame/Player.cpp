@@ -40,6 +40,11 @@ void Player::Update() {
 
 	UpdateWire();
 
+	if (worldTransform_.translation_.y < kDeathY) {
+		isDead_ = true;
+		hasWire_ = false;
+	}
+
 	AnimateTurn();
 
 	worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);

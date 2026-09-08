@@ -73,6 +73,9 @@ private:
 
 	static inline const float kHeight = 0.8f;
 
+	// この高さより下に落ちたら死亡する。
+	static inline const float kDeathY = -1.0f;
+
 	bool onGround_ = true;
 	bool hasWire_ = false;
 	// ワイヤーが壁に刺さった座標と、接続時に決まるワイヤーの長さ。
