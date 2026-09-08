@@ -2,7 +2,6 @@
 #include "KamataEngine.h"
 #include "TitleScene.h"
 #include "GameEnd.h"
-#include "GameOver.h"
 #include <Windows.h>
 
 using namespace KamataEngine;
@@ -10,14 +9,12 @@ using namespace KamataEngine;
 GameScene* gameScene = nullptr;
 TitleScene* titleScene = nullptr;
 GameEnd* gameEnd = nullptr;
-GameOver* gameOver = nullptr;
 
 enum class Scene {
 	kUnknown = 0,
 	kTitle,
 	kGame,
 	kEnd,
-	kOver,
 };
 
 Scene scene = Scene::kUnknown;
@@ -47,11 +44,11 @@ void ChangeScene() {
 				titleScene = new TitleScene;
 			titleScene->Initialize();
 		} else if (gameScene->IsFnished()) {
-			scene = Scene::kOver;
+			scene = Scene::kGame;
 			delete gameScene;
 			gameScene = nullptr;
-			gameOver = new GameOver;
-			gameOver->Initialize();
+			gameScene = new GameScene;
+			gameScene->Initialize();
 		} else if (gameScene->IsClear()) {
 			scene = Scene::kEnd;
 			delete gameScene;
@@ -70,15 +67,7 @@ void ChangeScene() {
 			titleScene->Initialize();
 		}
 		break;
-	case Scene::kOver:
-		if (gameOver->IsFinished()) {
-			scene = Scene::kTitle;
-			delete gameOver;
-			gameOver = nullptr;
-			titleScene = new TitleScene;
-			titleScene->Initialize();
-		}
-		break;
+
 	}
 
 }
@@ -94,9 +83,6 @@ void UpdateScene() {
 	case Scene::kEnd:
 		gameEnd->Update();
 		break;
-	case Scene::kOver:
-		gameOver->Update();
-		break;
 	}
 }
 
@@ -110,9 +96,6 @@ void DrawScene() {
 		break;
 	case Scene::kEnd:
 		gameEnd->Draw();
-		break;
-	case Scene::kOver:
-		gameOver->Draw();
 		break;
 	}
 }
@@ -150,7 +133,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	delete gameScene;
 	delete titleScene;
 	delete gameEnd;
-	delete gameOver;
 
 	KamataEngine::Finalize();
 

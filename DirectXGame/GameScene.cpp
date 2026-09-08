@@ -35,7 +35,7 @@ void GameScene::Initialize() {
 
 	modelBlock_ = Model::CreateFromOBJ("block", true);
 
-	modelPlayer_ = Model::CreateFromOBJ("imo", true);
+	modelPlayer_ = Model::CreateFromOBJ("player", true);
 
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 
@@ -95,6 +95,11 @@ void GameScene::Initialize() {
 	pauseTextureHandle_ = TextureManager::Load("pauseImage.png");
 	// pauseスプライト
 	pauseSprite_ = Sprite::Create(pauseTextureHandle_, {0.0f, 0.0f});
+
+	// サウンドデータ
+	soundHandle_ = Audio::GetInstance()->LoadWave("bgm/bgm.mp3");
+	// 音声再生
+	voiceHandle_ = Audio::GetInstance()->PlayWave(soundHandle_, true);
 }
 
 void GameScene::Update() {
@@ -154,6 +159,8 @@ void GameScene::Update() {
 		// プレイヤーが一定のラインを越えたらクリア
 		if (player_->GetWorldPosition().x >= mapChipField_->GetMapChipPositionByIndex(kGoalBlockIndexX_, 0).x) {
 			isClear_ = true;
+			//音声停止
+			Audio::GetInstance()->StopWave(voiceHandle_);
 		}
 
 		CheckAllCollisions();
@@ -264,6 +271,8 @@ void GameScene::ChangePhase() {
 
 			deathParticles_ = new DeathParticles;
 			deathParticles_->Initialize(modelDeathParticles_, &camera_, deathParticlesPosition);
+			// 音声停止
+			Audio::GetInstance()->StopWave(voiceHandle_);
 		}
 		break;
 	case Phase::kFadeIn:

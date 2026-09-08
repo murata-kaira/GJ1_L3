@@ -72,6 +72,10 @@ class GameScene {
 	// ステージクリアとなるゴール地点のマップチップX座標
 	static inline const uint32_t kGoalBlockIndexX_ = 96;
 
+	//サウンドデータ
+	uint32_t soundHandle_ = 0;
+	uint32_t voiceHandle_ = 0;
+
 
 
 public:
