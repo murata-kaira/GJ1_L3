@@ -46,20 +46,35 @@ private:
 
 	
 	
+	//プレイヤーの加速度
+	static inline const float kAcceleration = 0.3f;
 
-	static inline const float kAcceleration = 0.5;
+	//プレイヤーが入力を離したときの減速量
+	static inline const float kAttenuation = 0.1f;
 
-	static inline const float kAttenuation = 0.5;
+	// プレイヤーの最大走行速度
+	static inline const float kLimitRunSpeed = 0.15f;
 
-	static inline const float kLimitRunSpeed = 0.25;
+	// ワイヤー接続中に毎フレーム加える横方向の加速度。
+	static inline const float kWireAttachAcceleration = 0.02f;
 
+	// 短いワイヤーによる加速倍率の上限。
+	static inline const float kMaxWireAccelerationMultiplier = 1.0f;
+
+	// ワイヤーで振れている間だけ使用する最大横速度。
+	static inline const float kLimitWireSpeed = 0.25f;
+
+	// 左右反転にかかる時間
 	static inline const float kTimeTurn = 0.3f;
 
-	static inline const float kGravityAcceleration = 0.05f;
+	// 重力による加速度
+	static inline const float kGravityAcceleration = 0.03f;
 
+	// 落下速度の最大値
 	static inline const float kLimitFallSpeed = 0.5;
 
-	static inline const float kJumpAcceleration = 1.0f;
+	// ジャンプ時に加える上方向の速度
+	static inline const float kJumpAcceleration = 0.4f;
 
 	static inline const float kWidth = 0.8f;
 
@@ -71,6 +86,10 @@ private:
 	bool hasWire_ = false;
 	KamataEngine::Vector3 wireAnchor_ = {};
 	float wireLength_ = 0.0f;
+	float wireAttachDirectionX_ = 0.0f;
+	// ワイヤーの長さから計算した加速倍率。短いほど大きくなる。
+	float wireAccelerationMultiplier_ = 1.0f;
+
 
 
 	enum class LRDirection {

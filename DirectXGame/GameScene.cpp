@@ -15,6 +15,9 @@ GameScene::~GameScene() {
 	delete modelDeathParticles_;
 	delete fade_;
 
+	// pause画像
+	delete pauseSprite_;
+
 	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
 		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
 			delete worldTransformBlock;
@@ -45,7 +48,7 @@ void GameScene::Initialize() {
 	mapChipField_ = new MapChipField;
 	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
 
-	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
+	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 12);
 
 	player_ = new Player();
 
@@ -58,7 +61,7 @@ void GameScene::Initialize() {
 
 	for (int32_t i = 0; i < 3; ++i) {
 		Enemy* newEnemy = new Enemy();
-		Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(6 + i, 18);
+		Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(40 + i, 14);
 
 		newEnemy->Initialize(modelEnemy_, &camera_, enemyPosition);
 
@@ -87,54 +90,75 @@ void GameScene::Initialize() {
 	fade_ = new Fade();
 	fade_->Initialize();
 	fade_->Start(Fade::Status::FadeIn, 1.0f);
+
+	// pause画像
+	pauseTextureHandle_ = TextureManager::Load("pauseImage.png");
+	// pauseスプライト
+	pauseSprite_ = Sprite::Create(pauseTextureHandle_, {0.0f, 0.0f});
 }
 
 void GameScene::Update() {
 
-	fade_->Update();
-
-	player_->Update();
-	debugCamera_->Update();
-	cameraController_->Update();
-
-	if (deathParticles_) {
-		deathParticles_->Update();
+	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE)) {
+		isPause_ = !isPause_;
 	}
 
-	for (Enemy* enemy : enemies_) {
-		enemy->Update();
-	}
-
-#ifdef _DEBUG
-	if (Input::GetInstance()->TriggerKey(DIK_0)) {
-		isDebugCameraActive_ = !isDebugCameraActive_;
-	}
-#endif
-
-	if (isDebugCameraActive_) {
-		debugCamera_->Update();
-		camera_.matView = debugCamera_->GetCamera().matView;
-		camera_.matProjection = debugCamera_->GetCamera().matProjection;
-		camera_.TransferMatrix();
-	} else {
-		camera_.matView = cameraController_->GetViewProjection().matView;
-		camera_.matProjection = cameraController_->GetViewProjection().matProjection;
-		camera_.TransferMatrix();
-	}
-
-	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
-		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
-			if (!worldTransformBlock)
-				continue;
-
-			worldTransformBlock->matWorld_ = MakeAffineMatrix(worldTransformBlock->scale_, worldTransformBlock->rotation_, worldTransformBlock->translation_);
-
-			worldTransformBlock->TransferMatrix();
+	if (isPause_ == true) {
+		if (Input::GetInstance()->TriggerKey(DIK_RETURN)) {
+			isPauseReturn_ = true;
 		}
 	}
 
-	CheckAllCollisions();
-	ChangePhase();
+	if (isPause_ == false) {
+
+		fade_->Update();
+		player_->Update();
+		debugCamera_->Update();
+		cameraController_->Update();
+
+		if (deathParticles_) {
+			deathParticles_->Update();
+		}
+
+		for (Enemy* enemy : enemies_) {
+			enemy->Update();
+		}
+
+#ifdef _DEBUG
+		if (Input::GetInstance()->TriggerKey(DIK_0)) {
+			isDebugCameraActive_ = !isDebugCameraActive_;
+		}
+#endif
+
+		if (isDebugCameraActive_) {
+			debugCamera_->Update();
+			camera_.matView = debugCamera_->GetCamera().matView;
+			camera_.matProjection = debugCamera_->GetCamera().matProjection;
+			camera_.TransferMatrix();
+		} else {
+			camera_.matView = cameraController_->GetViewProjection().matView;
+			camera_.matProjection = cameraController_->GetViewProjection().matProjection;
+			camera_.TransferMatrix();
+		}
+
+		for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
+			for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
+				if (!worldTransformBlock)
+					continue;
+
+				worldTransformBlock->matWorld_ = MakeAffineMatrix(worldTransformBlock->scale_, worldTransformBlock->rotation_, worldTransformBlock->translation_);
+
+				worldTransformBlock->TransferMatrix();
+			}
+		}
+		// プレイヤーが一定のラインを越えたらクリア
+		if (Input::GetInstance()->TriggerKey(DIK_BACKSPACE)) {
+			isClear_ = true;
+		}
+
+		CheckAllCollisions();
+		ChangePhase();
+	}
 }
 
 void GameScene::Draw() {
@@ -163,6 +187,16 @@ void GameScene::Draw() {
 		}
 	}
 	Model::PostDraw();
+
+	// スプライト描画前処理
+	Sprite::PreDraw(dxCommon->GetCommandList());
+
+	if (isPause_ == true) {
+		pauseSprite_->Draw();
+	}
+
+	// スプライト描画後処理
+	Sprite::PostDraw();
 
 	// 接続中だけプレイヤーとアンカーの間にワイヤーを描画する。
 	if (player_->HasWire()) {

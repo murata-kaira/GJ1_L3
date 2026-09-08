@@ -92,16 +92,22 @@ void Player::InputMove() {
 			TryAttachWire();
 		}
 	}
+
+	// --------------------------------------------------------
+	// ワイヤー接続中の移動処理
+	// --------------------------------------------------------
 	// 接続中も左右入力と重力で振り子に勢いを与える。
 	if (hasWire_) {
 		Vector3 acceleration = {};
+		// 短いワイヤーほど大きい力で、刺さった方向へ少しずつ勢いを加える。
+		acceleration.x += wireAttachDirectionX_ * kWireAttachAcceleration * wireAccelerationMultiplier_;
 		if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
 			acceleration.x += kAcceleration;
 		} else if (Input::GetInstance()->PushKey(DIK_LEFT)) {
 			acceleration.x -= kAcceleration;
 		}
 		velocity_ += acceleration;
-		velocity_.x = std::clamp(velocity_.x, -kLimitRunSpeed, kLimitRunSpeed);
+		velocity_.x = std::clamp(velocity_.x, -kLimitWireSpeed, kLimitWireSpeed);
 		velocity_ += Vector3(0, -kGravityAcceleration, 0);
 		velocity_.y = std::max(velocity_.y, -kLimitFallSpeed);
 		onGround_ = false;
@@ -156,7 +162,8 @@ bool Player::TryAttachWire() {
 	const float directionX = lrDirection_ == LRDirection::kRight ? 1.0f : -1.0f;
 	const Vector3 direction = {directionX, 1.0f, 0.0f};
 	constexpr float kWireStep = 0.1f;
-	constexpr float kWireRange = 8.0f;
+	// ワイヤーを取り付けられる最大距離。
+	constexpr float kWireRange = 9.0f;
 	for (float distance = kWireStep; distance <= kWireRange; distance += kWireStep) {
 		Vector3 position = worldTransform_.translation_ + direction * distance;
 		MapChipField::IndexSet index = mapChipField_->GetMapChipIndexSetByPosition(position);
@@ -165,12 +172,21 @@ bool Player::TryAttachWire() {
 		}
 		wireAnchor_ = position;
 		wireLength_ = std::sqrt(distance * distance * 2.0f);
+		// 最長ワイヤーを基準に、短いほど加速倍率を上げる。
+		wireAccelerationMultiplier_ = std::clamp(kWireRange * std::sqrt(2.0f) / wireLength_, 1.0f, kMaxWireAccelerationMultiplier);
 		hasWire_ = true;
 		onGround_ = false;
+		// 接続後は、アンカーの下へ振り抜ける方向へ少しずつ加速する。
+		wireAttachDirectionX_ = directionX;
 		return true;
 	}
 	return false;
 }
+
+// ============================================================
+// ワイヤー更新処理
+// ============================================================
+
 void Player::UpdateWire() {
 	if (!hasWire_) {
 		return;
