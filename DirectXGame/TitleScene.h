@@ -42,6 +42,13 @@ private:
 	Phase phase_ = Phase::kFadeIn;
 
 
+	//テクスチャハンドル
+	uint32_t textureHandle_ = 0;
+
+	//スプライト
+	KamataEngine::Sprite* sprite_ = nullptr;
+
+
 
 
 

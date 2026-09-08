@@ -80,6 +80,9 @@ private:
 
 	static inline const float kHeight = 0.8f;
 
+		// この高さより下に落ちたら死亡する。
+	static inline const float kDeathY = -1.0f;
+
 	bool onGround_ = true;
 
 	// ワイヤーの接続状態

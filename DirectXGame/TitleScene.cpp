@@ -7,14 +7,19 @@ using namespace KamataEngine;
 TitleScene::~TitleScene() {
 	delete model_;
 	delete modelPlayer_;
-
+	delete sprite_;
 	delete fade_;
 }
 
 void TitleScene::Initialize() {
 
-	model_ = Model::CreateFromOBJ("titleFont");
-	modelPlayer_ = Model::CreateFromOBJ("player");
+	//model_ = Model::CreateFromOBJ("titleFont");
+	//modelPlayer_ = Model::CreateFromOBJ("player");
+
+	textureHandle_ = TextureManager::Load("titleFont/Title.png");
+	// スプライト生成
+	sprite_ = Sprite::Create(textureHandle_, {0, 0,});
+	sprite_->SetSize({1280, 720});
 
 	camera_.Initialize();
 
@@ -74,11 +79,18 @@ void TitleScene::Draw() {
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 	Model::PreDraw(dxCommon->GetCommandList());
-
-	model_->Draw(worldTransform_, camera_);
-	modelPlayer_->Draw(worldTransformPlayer_, camera_);
-
+	
+	//model_->Draw(worldTransform_, camera_);
+	//modelPlayer_->Draw(worldTransformPlayer_, camera_);
+	
 	Model::PostDraw();
+
+	// スプライト描画
+	Sprite::PreDraw(dxCommon->GetCommandList());
+
+	sprite_->Draw();
+
+	Sprite::PostDraw();
 
 	fade_->Draw();
 }

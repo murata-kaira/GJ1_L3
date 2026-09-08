@@ -41,6 +41,12 @@ void Player::Update() {
 
 	UpdateWire();
 
+	// 一定の高さより下に落下したら死亡扱いにする
+	if (worldTransform_.translation_.y < kDeathY) {
+		isDead_ = true;
+		hasWire_ = false;
+	}
+
 	AnimateTurn();
 
 	worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
@@ -101,11 +107,11 @@ void Player::InputMove() {
 		Vector3 acceleration = {};
 		// 短いワイヤーほど大きい力で、刺さった方向へ少しずつ勢いを加える。
 		acceleration.x += wireAttachDirectionX_ * kWireAttachAcceleration * wireAccelerationMultiplier_;
-		if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
+		/* if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
 			acceleration.x += kAcceleration;
 		} else if (Input::GetInstance()->PushKey(DIK_LEFT)) {
 			acceleration.x -= kAcceleration;
-		}
+		}*/
 		velocity_ += acceleration;
 		velocity_.x = std::clamp(velocity_.x, -kLimitWireSpeed, kLimitWireSpeed);
 		velocity_ += Vector3(0, -kGravityAcceleration, 0);

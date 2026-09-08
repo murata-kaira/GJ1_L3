@@ -69,6 +69,10 @@ class GameScene {
 
 	bool isClear_ = false;
 
+	// ステージクリアとなるゴール地点のマップチップX座標
+	static inline const uint32_t kGoalBlockIndexX_ = 96;
+
+
 
 public:
 	~GameScene();

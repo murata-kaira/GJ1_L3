@@ -6,15 +6,20 @@ using namespace KamataEngine;
 
 GameEnd::~GameEnd() {
 	delete model_;
-	delete modelPlayer_;
-
+	//delete modelPlayer_;
+	delete sprite_;
 	delete fade_;
 }
 
 void GameEnd::Initialize() {
 
-	model_ = Model::CreateFromOBJ("titleFont");
-	modelPlayer_ = Model::CreateFromOBJ("player");
+	//model_ = Model::CreateFromOBJ("titleFont");
+	//modelPlayer_ = Model::CreateFromOBJ("player");
+
+	textureHandle_ = TextureManager::Load("titleFont/Clear.png");
+	// スプライト生成
+	sprite_ = Sprite::Create(textureHandle_, { 0, 0});
+	sprite_->SetSize({1280, 720});
 
 	camera_.Initialize();
 
@@ -75,10 +80,19 @@ void GameEnd::Draw() {
 
 	Model::PreDraw(dxCommon->GetCommandList());
 
-	model_->Draw(worldTransform_, camera_);
-	modelPlayer_->Draw(worldTransformPlayer_, camera_);
+	//model_->Draw(worldTransform_, camera_);
+	//modelPlayer_->Draw(worldTransformPlayer_, camera_);
 
 	Model::PostDraw();
 
+	// スプライト描画
+	Sprite::PreDraw(dxCommon->GetCommandList());
+
+	sprite_->Draw();
+
+	Sprite::PostDraw();
+
 	fade_->Draw();
+
+	
 }

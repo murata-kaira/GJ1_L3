@@ -2,6 +2,7 @@
 #include "KamataEngine.h"
 #include "TitleScene.h"
 #include "GameEnd.h"
+#include "GameOver.h"
 #include <Windows.h>
 
 using namespace KamataEngine;
@@ -9,12 +10,14 @@ using namespace KamataEngine;
 GameScene* gameScene = nullptr;
 TitleScene* titleScene = nullptr;
 GameEnd* gameEnd = nullptr;
+GameOver* gameOver = nullptr;
 
 enum class Scene {
 	kUnknown = 0,
 	kTitle,
 	kGame,
 	kEnd,
+	kOver,
 };
 
 Scene scene = Scene::kUnknown;
@@ -44,11 +47,11 @@ void ChangeScene() {
 				titleScene = new TitleScene;
 			titleScene->Initialize();
 		} else if (gameScene->IsFnished()) {
-			scene = Scene::kGame;
+			scene = Scene::kOver;
 			delete gameScene;
 			gameScene = nullptr;
-			gameScene = new GameScene;
-			gameScene->Initialize();
+			gameOver = new GameOver;
+			gameOver->Initialize();
 		} else if (gameScene->IsClear()) {
 			scene = Scene::kEnd;
 			delete gameScene;
@@ -63,6 +66,15 @@ void ChangeScene() {
 			delete gameEnd;
 			gameEnd = nullptr;
 
+			titleScene = new TitleScene;
+			titleScene->Initialize();
+		}
+		break;
+	case Scene::kOver:
+		if (gameOver->IsFinished()) {
+			scene = Scene::kTitle;
+			delete gameOver;
+			gameOver = nullptr;
 			titleScene = new TitleScene;
 			titleScene->Initialize();
 		}
@@ -82,6 +94,9 @@ void UpdateScene() {
 	case Scene::kEnd:
 		gameEnd->Update();
 		break;
+	case Scene::kOver:
+		gameOver->Update();
+		break;
 	}
 }
 
@@ -95,6 +110,10 @@ void DrawScene() {
 		break;
 	case Scene::kEnd:
 		gameEnd->Draw();
+		break;
+	case Scene::kOver:
+		gameOver->Draw();
+		break;
 	}
 }
 
@@ -102,7 +121,7 @@ void DrawScene() {
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
-	KamataEngine::Initialize(L"LE2D_23_ムラタ_カイラ_AL3");
+	KamataEngine::Initialize(L"3067_ワイヤーで飛べ！");
 
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
@@ -131,6 +150,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	delete gameScene;
 	delete titleScene;
 	delete gameEnd;
+	delete gameOver;
 
 	KamataEngine::Finalize();
 

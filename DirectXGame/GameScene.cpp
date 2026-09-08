@@ -35,7 +35,7 @@ void GameScene::Initialize() {
 
 	modelBlock_ = Model::CreateFromOBJ("block", true);
 
-	modelPlayer_ = Model::CreateFromOBJ("player", true);
+	modelPlayer_ = Model::CreateFromOBJ("imo", true);
 
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 
@@ -152,7 +152,7 @@ void GameScene::Update() {
 			}
 		}
 		// プレイヤーが一定のラインを越えたらクリア
-		if (Input::GetInstance()->TriggerKey(DIK_BACKSPACE)) {
+		if (player_->GetWorldPosition().x >= mapChipField_->GetMapChipPositionByIndex(kGoalBlockIndexX_, 0).x) {
 			isClear_ = true;
 		}
 
